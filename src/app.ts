@@ -17,7 +17,8 @@ const options = {
   credential: true,
 };
 
-app.use(cors());
+app.use(cors(options));
+
 
 
 // Custom Error Handler
