@@ -1,14 +1,20 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
+import { Request } from "express";
+
+export interface IRequestAuth extends Request {
+  user?: IAuth;
+}
 
 type TAvatar = {
   url: string;
   localPath: string;
 };
 
-type TAuth = {
+export interface IAuth extends Document {
+  _id: Types.ObjectId;
   avatar: TAvatar;
   username: string;
   fullname: string;
@@ -20,7 +26,7 @@ type TAuth = {
   forgetPasswordToken: string;
   forgetPasswordExpiry: Date;
   refreshToken: string;
-};
+}
 
 type TAuthMethod = {
   isCheckingPassword(password: string): Promise<boolean>;
@@ -28,9 +34,9 @@ type TAuthMethod = {
   generatingRefreshToken(): string;
 };
 
-type TAuthModel = mongoose.Model<TAuth, {}, TAuthMethod>;
+type TAuthModel = mongoose.Model<IAuth, {}, TAuthMethod>;
 
-const authSchema = new Schema<TAuth, TAuthModel, TAuthMethod>(
+const authSchema = new Schema<IAuth, TAuthModel, TAuthMethod>(
   {
     avatar: {
       type: {

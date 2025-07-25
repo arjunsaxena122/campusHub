@@ -12,4 +12,4 @@ class APiResponse {
   }
 }
 
-export default APiResponse
+export { APiResponse };
