@@ -3,7 +3,34 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
 
-const authSchema = new Schema(
+type TAvatar = {
+  url: string;
+  localPath: string;
+};
+
+type TAuth = {
+  avatar: TAvatar;
+  username: string;
+  fullname: string;
+  email: string;
+  password: string;
+  isVerifiedEmail: boolean;
+  emailVerificationToken: string;
+  emmailVerificationExpiry: Date;
+  forgetPasswordToken: string;
+  forgetPasswordExpiry: Date;
+  refreshToken: string;
+};
+
+type TAuthMethod = {
+  isCheckingPassword(password: string): Promise<boolean>;
+  generatingAccessToken(): string;
+  generatingRefreshToken(): string;
+};
+
+type TAuthModel = mongoose.Model<TAuth, {}, TAuthMethod>;
+
+const authSchema = new Schema<TAuth, TAuthModel, TAuthMethod>(
   {
     avatar: {
       type: {
@@ -85,13 +112,13 @@ authSchema.methods.isCheckingPassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-authSchema.methods.generatingAccessToken = async function () {
+authSchema.methods.generatingAccessToken = function () {
   return jwt.sign({ id: this._id }, env.ACCESS_TOKEN_KEY, {
     expiresIn: env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],
   });
 };
 
-authSchema.methods.generatingRefreshToken = async function () {
+authSchema.methods.generatingRefreshToken = function () {
   return jwt.sign({ id: this._id }, env.REFRESH_TOKEN_KEY, {
     expiresIn: env.REFRESH_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],
   });
