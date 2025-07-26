@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { ApiError, APiResponse, asyncHandler } from "../utils/index";
 import { Auth, IRequestAuth } from "../models/auth.model";
 import { generatingAccessAndRefreshToken } from "../helper/auth.helper";
+import { UserRolesEnum } from "../constant";
 
 const register = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
   if (!email || !password) {
     throw new ApiError(400, "Please fill the all required field");
@@ -16,9 +17,17 @@ const register = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(409, "user already registered, Please Login!");
   }
 
+  if (role === UserRolesEnum.ADMIN) {
+    throw new ApiError(
+      403,
+      "You don't have permission to register as an Admin",
+    );
+  }
+
   const user = await Auth.create({
     email,
     password,
+    role,
   });
 
   const loggedInUser = await Auth.findById(user?._id);

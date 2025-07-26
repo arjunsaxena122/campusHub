@@ -19,10 +19,16 @@ const options = {
 
 app.use(cors(options));
 
+// Import Routers
 
+import authRouter from "./routes/auth.route";
+import announcementRouter from "./routes/announcement.route";
+
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/", announcementRouter);
 
 // Custom Error Handler
 
-app.use(customErrorHandler)
+app.use(customErrorHandler);
 
 export default app;

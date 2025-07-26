@@ -43,7 +43,7 @@ const authVerifyJwt = async (
   } catch (error) {
     next(
       new ApiError(
-        401,
+        403,
         "ERROR: ACCESS DENIED, You don't permit to access this context",
       ),
     );

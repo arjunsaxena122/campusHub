@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
 import { Request } from "express";
+import { AvailableUserRolesEnum, UserRolesEnum } from "../constant";
 
 export interface IRequestAuth extends Request {
   user?: IAuth;
@@ -21,6 +22,7 @@ export interface IAuth extends Document {
   email: string;
   password: string;
   isVerifiedEmail: boolean;
+  role: string;
   emailVerificationToken: string;
   emmailVerificationExpiry: Date;
   forgetPasswordToken: string;
@@ -80,6 +82,12 @@ const authSchema = new Schema<IAuth, TAuthModel, TAuthMethod>(
     isVerifiedEmail: {
       type: Boolean,
       default: false,
+    },
+
+    role: {
+      type: String,
+      enum: AvailableUserRolesEnum,
+      default: UserRolesEnum.Student,
     },
 
     emailVerificationToken: {
