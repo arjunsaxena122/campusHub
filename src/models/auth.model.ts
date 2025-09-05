@@ -87,7 +87,7 @@ const authSchema = new Schema<IAuth, TAuthModel, TAuthMethod>(
     role: {
       type: String,
       enum: AvailableUserRolesEnum,
-      default: UserRolesEnum.Student,
+      default: UserRolesEnum.STUDENT,
     },
 
     emailVerificationToken: {

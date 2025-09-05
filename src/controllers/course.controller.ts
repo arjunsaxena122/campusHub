@@ -3,7 +3,7 @@ import { Auth, IRequestAuth } from "../models/auth.model";
 import { Course } from "../models/course.model";
 import { Material } from "../models/material.model";
 import { ApiError, ApiResponse, asyncHandler } from "../utils";
-import { Request, Response } from "express";
+import { Response } from "express";
 
 // ! Courses
 

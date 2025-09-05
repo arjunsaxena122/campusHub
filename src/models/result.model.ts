@@ -76,6 +76,7 @@ const resultSchema = new Schema(
     grade: {
       type: String,
       trim: true,
+      default: "F",
       required: [true, "Grade is required"],
     },
 

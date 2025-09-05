@@ -1,8 +1,8 @@
 import { AvailableUserRolesEnum, UserRolesEnum } from "../constant";
 import { Auth, IRequestAuth } from "../models/auth.model";
 import { Result } from "../models/result.model";
-import { ApiError, APiResponse, asyncHandler } from "../utils";
-import type { Request, Response } from "express";
+import { ApiError, ApiResponse, asyncHandler } from "../utils";
+import type { Response } from "express";
 
 const createResult = asyncHandler(async (req: IRequestAuth, res: Response) => {
   const {
@@ -72,7 +72,7 @@ const createResult = asyncHandler(async (req: IRequestAuth, res: Response) => {
 
   return res
     .status(201)
-    .json(new APiResponse(201, "Result upload successfully", createResult));
+    .json(new ApiResponse(201, "Result upload successfully", createResult));
 });
 
 const getResultByStudentId = asyncHandler(
@@ -109,7 +109,7 @@ const getResultByStudentId = asyncHandler(
 
     return res
       .status(200)
-      .json(new APiResponse(200, `${result?.studentName} your result`, result));
+      .json(new ApiResponse(200, `${result?.studentName} your result`, result));
   },
 );
 
@@ -142,7 +142,7 @@ const getResultByAllStudent = asyncHandler(
 
     return res
       .status(200)
-      .json(new APiResponse(200, "Fetched all student result", result));
+      .json(new ApiResponse(200, "Fetched all student result", result));
   },
 );
 

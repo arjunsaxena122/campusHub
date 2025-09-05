@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ApiError, APiResponse, asyncHandler } from "../utils/index";
+import { ApiError, ApiResponse, asyncHandler } from "../utils/index";
 import { Auth, IRequestAuth } from "../models/auth.model";
 import { generatingAccessAndRefreshToken } from "../helper/auth.helper";
 import { UserRolesEnum } from "../constant";
@@ -11,7 +11,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Please fill the all required field");
   }
 
-  const existedUser = await Auth.findOne({ email });
+  const existedUser = await Auth.findOne({ email }); 
 
   if (existedUser) {
     throw new ApiError(409, "user already registered, Please Login!");
@@ -36,7 +36,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(500, "Internal server error, Please try again");
   }
 
-  res.status(201).json(new APiResponse(201, "user registered", loggedInUser));
+  res.status(201).json(new ApiResponse(201, "user registered", loggedInUser));
 });
 
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -78,7 +78,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     .status(201)
     .cookie("accessToken", accessToken, accessOption)
     .cookie("refreshTOken", refreshToken, refreshOption)
-    .json(new APiResponse(200, "user login successfully"));
+    .json(new ApiResponse(200, "user login successfully"));
 });
 
 const logout = asyncHandler(async (req: IRequestAuth, res: Response) => {
@@ -102,7 +102,7 @@ const logout = asyncHandler(async (req: IRequestAuth, res: Response) => {
     throw new ApiError(500, "Internal server error,");
   }
 
-  res.status(201).json(new APiResponse(200, "user logout successfully", user));
+  res.status(201).json(new ApiResponse(200, "user logout successfully", user));
 });
 
 const getMe = asyncHandler(async (req: IRequestAuth, res: Response) => {
@@ -112,7 +112,51 @@ const getMe = asyncHandler(async (req: IRequestAuth, res: Response) => {
 
   const user = req.user;
 
-  res.status(201).json(new APiResponse(200, `fetched ${user.email} data`));
+  res.status(201).json(new ApiResponse(200, `fetched ${user.email} data`));
 });
 
-export { register, login, logout, getMe };
+const apiKey = asyncHandler(async (req: IRequestAuth, res: Response) => {
+  if (!req.user || !req.user?._id) {
+    throw new ApiError(404, "Request userId not found");
+  }
+
+  const id = req.user._id;
+  const incomingRefreshToken = req?.cookies?.refreshToken
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(401, "Please login!")
+  }
+
+  const user = await Auth.findById(id)
+
+  if (!user) {
+    throw new ApiError(401, "Unauthorised user")
+  }
+
+  const { accessToken, refreshToken } = await generatingAccessAndRefreshToken(user?._id)
+
+  if (!accessToken || !refreshToken) {
+    throw new ApiError(400, "access and refresh token are not generated")
+  }
+
+  const accessOption = {
+    httpOnly: true,
+    secure: true,
+    maxAge: 1000 * 60 * 60 * 1,
+  };
+
+  const refreshOption = {
+    httpOnly: true,
+    secure: true,
+    maxAge: 1000 * 60 * 60 * 24,
+  };
+
+  res
+    .status(201)
+    .cookie("accessToken", accessToken, accessOption)
+    .cookie("refreshTOken", refreshToken, refreshOption)
+    .json(new ApiResponse(200, "Your keys successfully generated"));
+
+})
+
+export { register, login, logout, getMe, apiKey };

@@ -19,6 +19,7 @@ const materialSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+      
     },
 
     status: {

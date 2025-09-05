@@ -1,7 +1,7 @@
 import { UserRolesEnum } from "../constant";
 import { Announcement } from "../models/announcement.model";
 import { Auth, IRequestAuth } from "../models/auth.model";
-import { ApiError, APiResponse, asyncHandler } from "../utils";
+import { ApiError, ApiResponse, asyncHandler } from "../utils";
 import { Request, Response } from "express";
 
 const createAnnouncement = asyncHandler(
@@ -19,7 +19,7 @@ const createAnnouncement = asyncHandler(
       throw new ApiError(404, "user not found");
     }
 
-    if (user.role === UserRolesEnum.Student) {
+    if (user.role === UserRolesEnum.STUDENT) {
       throw new ApiError(
         403,
         "ERROR: ACCESS DENIED, You don't have permit to access this page",
@@ -52,7 +52,7 @@ const createAnnouncement = asyncHandler(
     return res
       .status(201)
       .json(
-        new APiResponse(
+        new ApiResponse(
           201,
           "Announcement create successfully",
           createdAnnouncement,
@@ -70,7 +70,7 @@ const getAllAnnouncement = asyncHandler(async (req: Request, res: Response) => {
 
   return res
     .status(200)
-    .json(new APiResponse(200, "Fetched all announcement", announcement));
+    .json(new ApiResponse(200, "Fetched all announcement", announcement));
 });
 
 export { createAnnouncement, getAllAnnouncement };

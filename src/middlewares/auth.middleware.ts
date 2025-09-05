@@ -31,7 +31,7 @@ const authVerifyJwt = async (
     }
 
     const user = await Auth.findById(decodeToken?.id).select(
-      "username fullname email isVerifiedEmail",
+      "_id username fullname email isVerifiedEmail",
     );
 
     if (!user) {
